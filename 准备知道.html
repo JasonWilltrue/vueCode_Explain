@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>准备知识</title>
+</head>
+
+<body>
+  <h1>vue前提知识回顾</h1>
+  <div id="test">
+    <ul>
+      <li>vue</li>
+      <li>react</li>
+      <li>jQuery</li>
+      <li>angle</li>
+    </ul>
+  </div>
+  <script>
+    /*
+     *1.[].slice.call(lis): 将伪数组转换为真数组
+     */
+    const lis = document.getElementsByTagName("li");
+    console.log(lis instanceof Array, lis[1].innerHTML, lis.forEach);
+    const lis2 = Array.prototype.slice.call(lis);
+    console.log(lis2 instanceof Array, lis2[1].innerHTML, lis2.forEach);
+
+    /*
+     * 2.node.nodeType: 得到节点类型
+       doucment element attr text节点
+     */
+    const ele = document.getElementById("test");
+    const attrNode = ele.getAttributeNode("id");
+    const textNode = ele.firstChild;
+    console.log(ele.nodeType, attrNode.nodeType, textNode.nodeType);
+
+    /**
+     * Object.defineProperty(obj, propertyName, {}): 给对象添加/修改属性(指定描述符)
+     *  configurable: true/false 是否可以重新define
+     * enumerable: true/false 是否可以枚举(for..in / keys())
+    * value: 指定初始值
+    *  writable: true/false value是否可以修改存取(访问)描述符
+get: 函数, 用来得到当前属性值
+ set: 函数, 用来监视当前属性值的变化
+     *
+     */
+    const obj = {
+      firstName: "A",
+      lastName: "B"
+    }
+    Object.defineProperty(obj, "fullname", {
+      get() {
+        return this.firstName + "-" + this.lastName;
+      },
+      set(value) {
+        const name = value.split("-");
+        this.firstName = name[0];
+        this.lastName = name[1];
+      }
+    })
+    console.log(obj.fullname);
+    obj.firstName = "C"
+    obj.lastName = "D"
+    console.log(obj.fullname);
+    obj.fullname = "E-F";
+    console.log(obj.firstName, obj.lastName);
+
+
+    /**
+     * 4.Object.keys(obj): 得到对象自身可枚举的属性名的数组
+     */
+
+    const objNames = Object.keys(obj)
+    console.log(objNames);
+
+    /**
+     * 6.obj.hasOwnProperty(prop): 判断prop是否是obj自身的属性
+     */
+    console.log(obj.hasOwnProperty("fullname"), obj.hasOwnProperty("toString"));
+
+    /**
+     * 5.DocumentFragment: 文档碎片(高效批量更新多个节点)
+     * 表示一个没有父级文件的最小文档对象
+     * 内存中报错n个element的容器 不与界面关联如果更新fragment中的某个元素
+     * 界面不会改变，减少更新次数
+     */
+    // 创建fragment
+    const ul = ele.getElementsByTagName("ul")[0];
+    const fragment = document.createDocumentFragment();
+    // 取出ul中所有子节点包括空格 换行符
+    let child;
+    console.log(ul.firstChild);
+    while (child = ul.firstChild) {
+      fragment.appendChild(child) //先移除ul中删除 添加到fragment
+    }
+    // 更新fragment中的li文本
+    console.log(Array.prototype.slice.call(fragment.childNodes));
+
+    Array.prototype.slice.call(fragment.childNodes).forEach(node => {
+      if (node.nodeType === 1) //元素节点
+      {
+        node.textContent = "改变之后"
+      }
+    })
+    // 插入ul中更新
+    ul.appendChild(fragment);
+  </script>
+</body>
+
+</html>
