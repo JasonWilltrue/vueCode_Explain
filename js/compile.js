@@ -1,10 +1,14 @@
 function Compile(el, vm) {
+    // 保存vm对象到compile中
     this.$vm = vm;
     this.$el = this.isElementNode(el) ? el : document.querySelector(el);
-
+    // 如果有el元素才执行
     if (this.$el) {
+        // 取出el元素中所有子节点保存到fragment中
         this.$fragment = this.node2Fragment(this.$el);
+        // 编译所有层次的子节点
         this.init();
+        //编译好的el元素添加到页面el元素中
         this.$el.appendChild(this.$fragment);
     }
 }
@@ -28,19 +32,19 @@ Compile.prototype = {
 
     compileElement: function(el) {
         var childNodes = el.childNodes,
-            me = this;
+            me         = this;           //this-> compile实例
 
         [].slice.call(childNodes).forEach(function(node) {
             var text = node.textContent;
-            var reg = /\{\{(.*)\}\}/;
+            var reg  = /\{\{(.*)\}\}/; // 匹配{{name}} 加小括号是为了$1 ==name
 
             if (me.isElementNode(node)) {
-                me.compile(node);
-
+                me.compile(node);  //是否有指令属性
+            // 是文本节点吗 有{{}} 吗
             } else if (me.isTextNode(node) && reg.test(text)) {
                 me.compileText(node, RegExp.$1);
             }
-
+            //  是否有子节点
             if (node.childNodes && node.childNodes.length) {
                 me.compileElement(node);
             }
@@ -49,7 +53,7 @@ Compile.prototype = {
 
     compile: function(node) {
         var nodeAttrs = node.attributes,
-            me = this;
+            me        = this;
 
         [].slice.call(nodeAttrs).forEach(function(attr) {
             var attrName = attr.name;
@@ -103,7 +107,7 @@ var compileUtil = {
     model: function(node, vm, exp) {
         this.bind(node, vm, exp, 'model');
 
-        var me = this,
+        var me  = this,
             val = this._getVMVal(vm, exp);
         node.addEventListener('input', function(e) {
             var newValue = e.target.value;
@@ -133,7 +137,7 @@ var compileUtil = {
     // 事件处理
     eventHandler: function(node, vm, exp, dir) {
         var eventType = dir.split(':')[1],
-            fn = vm.$options.methods && vm.$options.methods[exp];
+            fn        = vm.$options.methods && vm.$options.methods[exp];
 
         if (eventType && fn) {
             node.addEventListener(eventType, fn.bind(vm), false);
@@ -142,7 +146,7 @@ var compileUtil = {
 
     _getVMVal: function(vm, exp) {
         var val = vm._data;
-        exp = exp.split('.');
+            exp = exp.split('.');
         exp.forEach(function(k) {
             val = val[k];
         });
@@ -151,7 +155,7 @@ var compileUtil = {
 
     _setVMVal: function(vm, exp, value) {
         var val = vm._data;
-        exp = exp.split('.');
+            exp = exp.split('.');
         exp.forEach(function(k, i) {
             // 非最后一个key，更新val的值
             if (i < exp.length - 1) {
@@ -175,7 +179,7 @@ var updater = {
 
     classUpdater: function(node, value, oldValue) {
         var className = node.className;
-        className = className.replace(oldValue, '').replace(/\s$/, '');
+            className = className.replace(oldValue, '').replace(/\s$/, '');
 
         var space = className && String(value) ? ' ' : '';
 
