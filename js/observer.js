@@ -15,13 +15,13 @@ Observer.prototype = {
     },
 
     defineReactive: function(data, key, val) {
-        var dep = new Dep();
+        var dep      = new Dep();
         var childObj = observe(val);
-
+        // 为什么要重新定义key属性 因为重新定义key是属性更强大拥有set get及额外属性
         Object.defineProperty(data, key, {
-            enumerable: true, // 可枚举
-            configurable: false, // 不能再define
-            get: function() {
+            enumerable  : true,         // 可枚举
+            configurable: false,        // 不能再define
+            get         : function() {
                 if (Dep.target) {
                     dep.depend();
                 }
@@ -53,7 +53,7 @@ function observe(value, vm) {
 var uid = 0;
 
 function Dep() {
-    this.id = uid++;
+    this.id   = uid++;
     this.subs = [];
 }
 

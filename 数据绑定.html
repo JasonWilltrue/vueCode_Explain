@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>数据绑定</title>
+  <script src="./js/compile.js"></script>
+  <script src="./js/mvvm.js"></script>
+  <script src="./js/observer.js"></script>
+  <script src="./js/watcher.js"></script>
+  <style>
+    .text {
+      color: red
+    }
+  </style>
+</head>
+
+<body>
+  <div id="test">
+    <p >{{name}}</p>
+    <button v-on:click="update">更新</button>
+
+  </div>
+  <script>
+    new MVVM({
+      el: '#test',
+      data: {
+        name: '哈哈哈'
+      },
+      methods: {
+        update() {
+          this.name="😂"
+        }
+      },
+    })
+  </script>
+</body>
+
+</html>
