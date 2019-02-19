@@ -4,30 +4,31 @@ function Observer(data) {
 }
 
 Observer.prototype = {
-    walk: function(data) {
+    walk: function (data) {
         var me = this;
-        Object.keys(data).forEach(function(key) {
+        Object.keys(data).forEach(function (key) {
             me.convert(key, data[key]);
         });
     },
-    convert: function(key, val) {
+    convert: function (key, val) {
+        // 响应式数据
         this.defineReactive(this.data, key, val);
     },
 
-    defineReactive: function(data, key, val) {
+    defineReactive: function (data, key, val) {
         var dep      = new Dep();
         var childObj = observe(val);
         // 为什么要重新定义key属性 因为重新定义key是属性更强大拥有set get及额外属性
         Object.defineProperty(data, key, {
-            enumerable  : true,         // 可枚举
-            configurable: false,        // 不能再define
-            get         : function() {
+            enumerable  : true,          // 可枚举
+            configurable: false,         // 不能再定义 避免重新覆盖get  set
+            get         : function () {
                 if (Dep.target) {
                     dep.depend();
                 }
                 return val;
             },
-            set: function(newVal) {
+            set: function (newVal) {
                 if (newVal === val) {
                     return;
                 }
@@ -42,10 +43,10 @@ Observer.prototype = {
 };
 
 function observe(value, vm) {
+    // 递归的结束条件
     if (!value || typeof value !== 'object') {
         return;
     }
-
     return new Observer(value);
 };
 
@@ -58,23 +59,23 @@ function Dep() {
 }
 
 Dep.prototype = {
-    addSub: function(sub) {
+    addSub: function (sub) {
         this.subs.push(sub);
     },
 
-    depend: function() {
+    depend: function () {
         Dep.target.addDep(this);
     },
 
-    removeSub: function(sub) {
+    removeSub: function (sub) {
         var index = this.subs.indexOf(sub);
         if (index != -1) {
             this.subs.splice(index, 1);
         }
     },
 
-    notify: function() {
-        this.subs.forEach(function(sub) {
+    notify: function () {
+        this.subs.forEach(function (sub) {
             sub.update();
         });
     }

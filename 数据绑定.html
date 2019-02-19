@@ -19,7 +19,7 @@
 
 <body>
   <div id="test">
-    <p >{{name}}</p>
+    <p>{{name}}</p>
     <button v-on:click="update">更新</button>
 
   </div>
@@ -27,11 +27,15 @@
     new MVVM({
       el: '#test',
       data: {
-        name: '哈哈哈'
+        name: '哈哈哈',
+        other: {
+          "age": 25,
+          "sex": "man"
+        }
       },
       methods: {
         update() {
-          this.name="😂"
+          this.name = "😂"
         }
       },
     })

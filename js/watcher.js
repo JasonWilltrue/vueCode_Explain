@@ -1,24 +1,25 @@
 function Watcher(vm, exp, cb) {
-    this.cb = cb;
-    this.vm = vm;
-    this.exp = exp;
-    this.depIds = {};
-    this.value = this.get();
+    this.cb     = cb;          //用更新界面的回调
+    this.vm     = vm;          //vm
+    this.exp    = exp;         //对应的表达式
+    this.depIds = {};          //相关n个dep的容器对象
+    this.value  = this.get();  //当前表达式对应的value 存起来
 }
 
 Watcher.prototype = {
-    update: function() {
+    update: function () {
         this.run();
     },
-    run: function() {
-        var value = this.get();
+    run: function () {
+        var value  = this.get();
         var oldVal = this.value;
         if (value !== oldVal) {
             this.value = value;
+            // cb更新界面的回调函数
             this.cb.call(this.vm, value, oldVal);
         }
     },
-    addDep: function(dep) {
+    addDep: function (dep) {
         // 1. 每次调用run()的时候会触发相应属性的getter
         // getter里面会触发dep.depend()，继而触发这里的addDep
         // 2. 假如相应属性的dep.id已经在当前watcher的depIds里，说明不是一个新的属性，仅仅是改变了其值而已
@@ -38,17 +39,17 @@ Watcher.prototype = {
             this.depIds[dep.id] = dep;
         }
     },
-    get: function() {
-        Dep.target = this;
-        var value = this.getVMVal();
-        Dep.target = null;
+    get: function () {
+            Dep.target = this;
+        var value      = this.getVMVal();
+            Dep.target = null;
         return value;
     },
 
-    getVMVal: function() {
+    getVMVal: function () {
         var exp = this.exp.split('.');
         var val = this.vm._data;
-        exp.forEach(function(k) {
+        exp.forEach(function (k) {
             val = val[k];
         });
         return val;
